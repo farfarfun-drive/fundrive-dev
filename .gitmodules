@@ -1,0 +1,15 @@
+[submodule "apps/fundrive"]
+	path = apps/fundrive
+	url = https://github.com/farfarfun/fundrive.git
+[submodule "apps/fundrive-alipan"]
+	path = apps/fundrive-alipan
+	url = https://github.com/farfarfun/fundrive-alipan.git
+[submodule "apps/fundrive-baidu"]
+	path = apps/fundrive-baidu
+	url = https://github.com/farfarfun/fundrive-baidu.git
+[submodule "apps/fundrive-lanzou"]
+	path = apps/fundrive-lanzou
+	url = https://github.com/farfarfun/fundrive-lanzou.git
+[submodule "apps/fundrive-quark"]
+	path = apps/fundrive-quark
+	url = https://github.com/farfarfun/fundrive-quark.git
