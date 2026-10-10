@@ -66,11 +66,11 @@
 先于驱动构建。这不影响正确性：核心库对驱动的引用是 extras 里的下界约束（`>=`），
 在安装时才解析，不要求构建期拿到驱动的新版本。
 
-共享版本号当前取 `2.0.89` —— 五个 app 已发布版本里的最高值（`fundrive` 2.0.89、
-`fundrive-alipan` 1.3.15、`fundrive-baidu` 1.0.13、`fundrive-lanzou` 1.2.75、
-`fundrive-quark` 1.0.4）。取最高值是唯一不会让 `fundrive` 版本号回退的选择；
-代价是四个驱动包在首次共享版本构建后会从 1.x 跳到 2.0.90，见
-[004-known-deviations.md](./004-known-deviations.md) 第 3 条。
+共享版本号的权威来源是 `scripts/funbuild.toml` 本身 —— `funbuild` 每次 build 都会就地重写
+它，所以**不要在文档里复制这个值**，要看就去读那个文件（或 `git tag` 列表）。
+初始值取 `2.0.89`（当时五个 app 已发布版本里的最高值），这使四个驱动包从 1.x 并入了
+2.0.x 版本线：取舍理由与对下游的含义见
+[004-known-deviations.md](./004-known-deviations.md) 第 3 条。版本号只能单调前进。
 
 `scripts/funbuild.toml` 还支持一个 `packages` 字段（构建前把命中的依赖抬到最新版），
 本工作区**没有配置**它：`funbuild` 只扫 `[project.dependencies]`，而 `fundrive` 对四个

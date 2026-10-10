@@ -61,9 +61,9 @@ action 分两组，**两组的 `all` 含义不同**：
 ```bash
 # 安装 / 升级：对 service + package 都有效，all = core alipan baidu lanzou quark
 bash scripts/setup.sh install-dev all           # 从工作树构建并本地安装
-bash scripts/setup.sh install-prod core 2.0.89  # 从索引装指定版本，省略版本=最新
+bash scripts/setup.sh install-prod core 2.0.90  # 从索引装指定版本，省略版本=最新
 bash scripts/setup.sh upgrade all
-bash scripts/setup.sh rollback core 2.0.88      # 版本号必填
+bash scripts/setup.sh rollback core 2.0.89      # 版本号必填
 
 bash scripts/setup.sh                           # 不带参数：gum 交互选 action/target
 ```
@@ -94,9 +94,10 @@ bash scripts/build.sh      # 等价于 funbuild build
 它递增 `scripts/funbuild.toml` 的共享版本号，用这个版本构建并发布 `apps/` 下每个应用，
 最后统一执行一次 `funbuild push`，把五个子模块指针的更新作为一次提交推送。
 
-> 共享版本号当前是 `2.0.89`（五个 app 已发布版本里的最高值）。首次共享版本构建会把四个驱动包
-> 从 1.x 一次性带到 `2.0.90`，这是对外可见且不可撤销的版本跳变 —— 取舍理由见
-> [已知治理偏差](docs/project/project-governance/004-known-deviations.md)第 3 条，确认后再跑。
+> 五个包共用一个版本号，权威来源是 `scripts/funbuild.toml`（`funbuild` 每次 build 就地重写它，
+> 别在别处复制这个值）。**驱动包的版本号不再独立反映各自的改动幅度** —— 一行没改也会随工作区
+> 发版号走，读变更要看各仓库的 `CHANGELOG.md`。背景见
+> [已知治理偏差](docs/project/project-governance/004-known-deviations.md)第 3 条。
 
 ## 文档
 

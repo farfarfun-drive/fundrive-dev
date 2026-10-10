@@ -43,14 +43,15 @@ push，再在本仓库 bump 五个指针。
 收进它的 `README.md` 或保留为非 `docs/` 包的单文件。迁完删旧路径，不让两套 canonical path
 长期并存。
 
-## 3. 首次共享版本构建会把四个驱动包从 1.x 跳到 2.0.90
+## 3. 共享版本号已把四个驱动包从 1.x 并到 2.0.90（已执行，留档）
 
-**现状**：`scripts/funbuild.toml` 取 `version = "2.0.89"`，是五个 app 已发布版本里的最高
-值。`funbuild build` 会递增它并用同一个版本号发布全部五个包。
+这条不是待修的偏差，是一次**已发生且不可撤销**的版本线合并，记在这里供以后追溯。
 
-**影响**：下一次 `bash scripts/build.sh` 之后，`fundrive-alipan`（1.3.15）、
-`fundrive-baidu`（1.0.13）、`fundrive-lanzou`（1.2.75）、`fundrive-quark`（1.0.4）
-会一次性跳到 `2.0.90`。这是对外可见的版本号跳变。
+**做了什么**：`scripts/funbuild.toml` 的初始共享版本号取 `2.0.89` —— 当时五个 app 已发布
+版本里的最高值（`fundrive` 2.0.89、`fundrive-alipan` 1.3.15、`fundrive-baidu` 1.0.13、
+`fundrive-lanzou` 1.2.75、`fundrive-quark` 1.0.4）。2026-10-10 首次 `funbuild build`
+把它递增到 `2.0.90`，并用这一个版本号把五个包全部发布到 PyPI、各自打上 `v2.0.90` tag。
+四个驱动包因此从 1.x 一次性并入 2.0.x 版本线。
 
 **为什么是这个取舍**：`funbuild` 的编排仓库模式强制一个共享版本号，没有「各 app 保留自己
 版本线」的选项。取低于 2.0.89 的值会让 `fundrive` 的版本号回退，索引上的 latest 解析会坏掉
@@ -58,12 +59,16 @@ push，再在本仓库 bump 五个指针。
 版本的「可读性」，不影响可解析性 —— `fundrive` 对驱动的 extras 约束都是 `>=` 下界，
 跳到 2.0.90 依然满足。
 
-**执行前确认**：第一次跑 `scripts/build.sh` 会把这个跳变发布到索引，不可撤销。确认接受
-之后再跑。
+**对下游的含义**：四个驱动包的版本号从此与 `fundrive` 同步前进，**不再独立反映各自的改动
+幅度** —— 某个驱动一行没改也会随工作区发版号走。读这几个包的版本号时不要按语义化版本推断
+变更大小，要看各仓库的 `CHANGELOG.md`。
+
+**不要做的事**：不要为了「修正」版本号而把 `scripts/funbuild.toml` 调回 1.x —— 那会让
+四个驱动包的版本号回退，索引上的 latest 解析会坏掉。共享版本号只能单调前进。
 
 ## 4. `fundrive-quark` 在核心库里没有对应的 drive 与 extra
 
-**现状**：`apps/fundrive-quark` 已作为独立包发布（1.0.4），但 `fundrive` 核心库里
+**现状**：`apps/fundrive-quark` 已作为独立包发布（当前 2.0.90），但 `fundrive` 核心库里
 既没有 `src/fundrive/drives/quark/`，`pyproject.toml` 的 `[project.optional-dependencies]`
 里也没有 `quark` 这一项 —— 整个 `fundrive` 源码树里没有任何 `quark` 字样。
 另外三个驱动都有对应的 drive 实现与 extra。
