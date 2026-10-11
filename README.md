@@ -7,11 +7,11 @@ fundrive 联合开发仓库，通过 Git 子模块固定统一网盘接口核心
 
 | 目录 | 别名 | 类别 | 项目 | 说明 |
 | --- | --- | --- | --- | --- |
-| `apps/fundrive` | `core` | package | [fundrive](https://github.com/farfarfun/fundrive) | 核心库：统一的 `BaseDrive` 网盘操作接口与 20+ 网盘的 drive 实现 |
-| `apps/fundrive-alipan` | `alipan` | package | [fundrive-alipan](https://github.com/farfarfun/fundrive-alipan) | 阿里云盘开放平台 API 封装：扫码登录、文件列表/搜索、上传下载、分享 |
-| `apps/fundrive-baidu` | `baidu` | package | [fundrive-baidu](https://github.com/farfarfun/fundrive-baidu) | 百度网盘 PCS API 封装：上传下载、移动复制、离线下载、分享转存 |
-| `apps/fundrive-lanzou` | `lanzou` | package | [fundrive-lanzou](https://github.com/farfarfun/fundrive-lanzou) | 蓝奏云 API 封装：登录、文件/文件夹列表、上传下载、分享提取 |
-| `apps/fundrive-quark` | `quark` | package | [fundrive-quark](https://github.com/farfarfun/fundrive-quark) | 夸克网盘 Web API 封装：分享链接解析、转存、文件列表、批量分享 |
+| `apps/fundrive` | `core` | package | [fundrive](https://github.com/farfarfun-fundrive/fundrive) | 核心库：统一的 `BaseDrive` 网盘操作接口与 20+ 网盘的 drive 实现 |
+| `apps/fundrive-alipan` | `alipan` | package | [fundrive-alipan](https://github.com/farfarfun-fundrive/fundrive-alipan) | 阿里云盘开放平台 API 封装：扫码登录、文件列表/搜索、上传下载、分享 |
+| `apps/fundrive-baidu` | `baidu` | package | [fundrive-baidu](https://github.com/farfarfun-fundrive/fundrive-baidu) | 百度网盘 PCS API 封装：上传下载、移动复制、离线下载、分享转存 |
+| `apps/fundrive-lanzou` | `lanzou` | package | [fundrive-lanzou](https://github.com/farfarfun-fundrive/fundrive-lanzou) | 蓝奏云 API 封装：登录、文件/文件夹列表、上传下载、分享提取 |
+| `apps/fundrive-quark` | `quark` | package | [fundrive-quark](https://github.com/farfarfun-fundrive/fundrive-quark) | 夸克网盘 Web API 封装：分享链接解析、转存、文件列表、批量分享 |
 
 「类别」决定哪些 action 对它有效，见下文「安装 / 升级」。这一列必须与 `scripts/setup.sh` 里的
 `resolve_service_app()` / `resolve_package_app()` 一致 —— 两处不一致是缺陷。
@@ -30,7 +30,7 @@ fundrive 联合开发仓库，通过 Git 子模块固定统一网盘接口核心
 首次克隆时同时拉取子模块：
 
 ```bash
-git clone --recurse-submodules https://github.com/farfarfun/fundrive-dev.git
+git clone --recurse-submodules https://github.com/farfarfun-fundrive/fundrive-dev.git
 cd fundrive-dev
 ```
 
