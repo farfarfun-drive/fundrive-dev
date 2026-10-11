@@ -8,7 +8,7 @@
 首次克隆时连带子模块：
 
 ```bash
-git clone --recurse-submodules https://github.com/farfarfun/fundrive-dev.git
+git clone --recurse-submodules https://github.com/farfarfun-drive/fundrive-dev.git
 cd fundrive-dev
 ```
 
