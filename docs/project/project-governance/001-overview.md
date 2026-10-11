@@ -23,11 +23,11 @@ commit / push：
 
 | 路径 | 仓库 | 别名 | 类别 |
 | --- | --- | --- | --- |
-| `apps/fundrive` | `farfarfun/fundrive` | `core` | package（核心库） |
-| `apps/fundrive-alipan` | `farfarfun/fundrive-alipan` | `alipan` | package（驱动） |
-| `apps/fundrive-baidu` | `farfarfun/fundrive-baidu` | `baidu` | package（驱动） |
-| `apps/fundrive-lanzou` | `farfarfun/fundrive-lanzou` | `lanzou` | package（驱动） |
-| `apps/fundrive-quark` | `farfarfun/fundrive-quark` | `quark` | package（驱动） |
+| `apps/fundrive` | `farfarfun-drive/fundrive` | `core` | package（核心库） |
+| `apps/fundrive-alipan` | `farfarfun-drive/fundrive-alipan` | `alipan` | package（驱动） |
+| `apps/fundrive-baidu` | `farfarfun-drive/fundrive-baidu` | `baidu` | package（驱动） |
+| `apps/fundrive-lanzou` | `farfarfun-drive/fundrive-lanzou` | `lanzou` | package（驱动） |
+| `apps/fundrive-quark` | `farfarfun-drive/fundrive-quark` | `quark` | package（驱动） |
 
 本工作区目前**没有** service 类应用，也**没有** nested workspace 类应用 —— 五个 app 全是
 只被 `import` / `pip install` 的库，没有任何东西把它们当长驻进程启动。分类依据见
