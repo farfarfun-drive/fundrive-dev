@@ -115,3 +115,5 @@ bash scripts/build.sh      # 等价于 funbuild build
 - 🏠 组织主页：<https://github.com/farfarfun-drive>
 - 📦 PyPI：<https://pypi.org/user/niuliangtao/>
 - 📧 联系：farfarfun@qq.com
+
+本项目基于 [MIT](LICENSE) 协议开源。
