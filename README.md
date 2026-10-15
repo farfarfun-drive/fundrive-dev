@@ -103,3 +103,15 @@ bash scripts/build.sh      # 等价于 funbuild build
 
 从[项目治理总览](docs/project/project-governance/001-overview.md)开始 —— 它是文档入口，含完整索引。
 跨 app 的产品级文档集中在本仓库 `docs/` 下，各 app 仓库不维护自己的 `docs/` 包。
+
+---
+
+## 关于 farfarfun-drive
+
+[farfarfun](https://github.com/farfarfun) 的网盘 / 云存储产品线：以
+[fundrive](https://github.com/farfarfun-drive/fundrive) 的统一 `BaseDrive` 接口为核心，
+配套各网盘的独立驱动包与蓝奏云 SDK / 桌面客户端。
+
+- 🏠 组织主页：<https://github.com/farfarfun-drive>
+- 📦 PyPI：<https://pypi.org/user/niuliangtao/>
+- 📧 联系：farfarfun@qq.com
