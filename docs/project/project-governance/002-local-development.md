@@ -15,7 +15,7 @@ cd fundrive-dev
 已经是 plain clone（没带 `--recurse-submodules`）时：
 
 ```bash
-bash scripts/init.sh      # git submodule init && git submodule update
+bash scripts/init.sh      # git submodule update --init --recursive
 ```
 
 `scripts/init.sh` 不需要任何参数、不交互，这是新同学在 plain clone 之后唯一要跑的命令。
@@ -45,16 +45,43 @@ bash scripts/init.sh      # git submodule init && git submodule update
 
 ```bash
 git submodule update --remote
-git add apps/fundrive apps/fundrive-alipan apps/fundrive-baidu apps/fundrive-lanzou apps/fundrive-quark
+git add apps/ && git commit
 ```
+
+跟踪分支在 `.gitmodules` 里显式写成了 `branch = master`，所以 `--remote` 的目标不依赖
+git 版本的默认行为（旧版 git 默认 `master`，2.28+ 默认远端 HEAD）。
 
 `--remote` 之后子模块通常处于 detached HEAD；`funbuild build` 会在构建前自己切回远端默认
 分支（只在确实 detached 时切，不打断手动切到的 feature 分支）。手工开发时如果要在子模块里
-提交，先自己 `git -C apps/<name> switch master`。
+提交，先自己 `git -C apps/<name> switch master`，或者用这条一次把五个都带到 master：
+
+```bash
+git submodule foreach 'git checkout master && git pull --ff-only'
+```
+
+CI 的 `submodule-freshness` job 每天跑一次，比对 `HEAD` 里记录的指针与各 app `master` 的
+最新 commit，落后就失败 —— 它守的就是上面「不要让 app 已 push 而指针没提交」那条。
+它不做 PR 门禁：app 仓库有新 commit 不该让本仓库无关的 PR 变红。
+
+> **坑**：在「已经拉到新 commit、但指针还没 `git add`」这个窗口里**不要跑
+> `scripts/init.sh`**（`git submodule update`）—— 它会把子模块退回指针记录的那个 commit，
+> 把你刚拉的东西悄悄撤掉。先 `git add apps/`，再做别的。
 
 ## 本地安装与验证
 
-五个 app 都是 uv 管理的 Python 包（`pyproject.toml` + `uv.lock`），在各自目录里操作：
+跨仓库的统一安装入口是 `scripts/setup.sh`。核心库与驱动联调时，一条命令把五个 app 全部从
+工作树可编辑安装 —— 之后改任何一个 app 的源码都立刻生效，不用重装：
+
+```bash
+uv venv                                  # 在仓库根建一个目标环境（只需一次）
+bash scripts/setup.sh install-dev all    # = uv pip install --editable apps/<每一个>
+bash scripts/setup.sh install-dev baidu  # 只装某一个
+```
+
+release action 会真的装包，所以需要一个明确的目标环境：激活的 venv、仓库根的 `.venv`，
+或显式 `FUNDRIVE_INSTALL_SYSTEM=1`。三者都没有时脚本直接报错，**不会**默默装进系统 python。
+
+单个 app 自己跑测试时在它目录里用 uv（五个 app 都是 `pyproject.toml` + `uv.lock`）：
 
 ```bash
 cd apps/fundrive
@@ -63,14 +90,5 @@ uv sync --extra baidu --extra lanzou     # 需要某个网盘驱动时按 extra 
 uv run pytest
 ```
 
-核心库与驱动联调时，让 `fundrive` 用工作树里的驱动而不是索引上的发布版：
-
-```bash
-cd apps/fundrive
-uv pip install -e ../fundrive-baidu      # 本地可编辑安装，覆盖 extra 里的发布版
-```
-
-跨仓库的统一安装入口是 `scripts/setup.sh install-dev <target>`，但它要求目标 app 自己有
-`scripts/setup.sh` —— 目前五个 app 都还没有，见
-[004-known-deviations.md](./004-known-deviations.md) 第 1 条。在那之前按上面的 `uv` 命令
-手工操作。
+这两条路不要混用：`install-dev` 装进的是仓库根的环境（跨 app 联调用），`uv sync` 装进的是
+`apps/<name>/.venv`（单 app 测试用）。

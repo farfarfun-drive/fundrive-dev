@@ -1,15 +1,20 @@
 [submodule "apps/fundrive"]
 	path = apps/fundrive
 	url = https://github.com/farfarfun-drive/fundrive.git
+	branch = master
 [submodule "apps/fundrive-alipan"]
 	path = apps/fundrive-alipan
 	url = https://github.com/farfarfun-drive/fundrive-alipan.git
+	branch = master
 [submodule "apps/fundrive-baidu"]
 	path = apps/fundrive-baidu
 	url = https://github.com/farfarfun-drive/fundrive-baidu.git
+	branch = master
 [submodule "apps/fundrive-lanzou"]
 	path = apps/fundrive-lanzou
 	url = https://github.com/farfarfun-drive/fundrive-lanzou.git
+	branch = master
 [submodule "apps/fundrive-quark"]
 	path = apps/fundrive-quark
 	url = https://github.com/farfarfun-drive/fundrive-quark.git
+	branch = master

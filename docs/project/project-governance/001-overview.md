@@ -16,7 +16,8 @@
 
 `fundrive-dev` 是编排仓库（dev repo），本身不放任何应用代码，只记录五个子模块的 commit
 指针，加跨仓库的 `scripts/` 与 `docs/`。自身受版本控制的文件仅限：`README.md`、
-`.gitmodules`、`.gitignore`、`scripts/`、`docs/`。
+`CLAUDE.md`、`LICENSE`、`.gitmodules`、`.gitignore`、`.github/workflows/`、`scripts/`、
+`docs/`。
 
 五个子模块各自是独立 GitHub 仓库，有自己的 git 历史、issue 与发布节奏，要单独
 commit / push：
@@ -27,11 +28,14 @@ commit / push：
 | `apps/fundrive-alipan` | `farfarfun-drive/fundrive-alipan` | `alipan` | package（驱动） |
 | `apps/fundrive-baidu` | `farfarfun-drive/fundrive-baidu` | `baidu` | package（驱动） |
 | `apps/fundrive-lanzou` | `farfarfun-drive/fundrive-lanzou` | `lanzou` | package（驱动） |
-| `apps/fundrive-quark` | `farfarfun-drive/fundrive-quark` | `quark` | package（驱动） |
+| `apps/fundrive-quark` | `farfarfun-drive/fundrive-quark` | `quark` | package（驱动，独立包） |
 
 本工作区目前**没有** service 类应用，也**没有** nested workspace 类应用 —— 五个 app 全是
 只被 `import` / `pip install` 的库，没有任何东西把它们当长驻进程启动。分类依据见
 [003-release-and-entrypoint.md](./003-release-and-entrypoint.md)。
+
+这张表与 `README.md`、`003-release-and-entrypoint.md` 里的表格都是手写副本，唯一来源是
+`scripts/setup.sh` 的 `APP_REGISTRY`，由 `scripts/check-apps.sh` 比对（CI 会跑）。
 
 ## 依赖关系
 
@@ -45,9 +49,17 @@ fundrive[baidu]  -> fundrive-baidu
 fundrive[lanzou] -> fundrive-lanzou + funfile
 ```
 
-因此四个驱动仓库既服务于 `fundrive`，也可以被第三方项目单独 `pip install` 使用 ——
-它们不是 `fundrive` 的内部实现细节。`fundrive-quark` 目前是个例外，见
-[004-known-deviations.md](./004-known-deviations.md)。
+因此这三个驱动仓库既服务于 `fundrive`，也可以被第三方项目单独 `pip install` 使用 ——
+它们不是 `fundrive` 的内部实现细节。
+
+`fundrive-quark` **不在这个依赖关系里**：核心库既没有 `quark` drive 也没有 `quark` extra，
+它只作为独立包发布给第三方直接安装。这是已经定下来的定位，不是漏接 —— 见
+[004-known-deviations.md](./004-known-deviations.md) 第 4 条。
+
+四个驱动包都把代码装进 `fundrives` 这个 **PEP 420 隐式命名空间包**
+（`fundrives.aliopen` / `fundrives.baidu` / `fundrives.lanzou` / `fundrives.quark`），
+四个发行包因此能共存在同一个环境里。谁要是在自己的 `src/fundrives/` 下加了 `__init__.py`，
+就会把另外三个的 portion 遮掉 —— CI 的 `smoke` job 会把四个装在一起再一并 import 来守这条。
 
 ## 约定来源
 

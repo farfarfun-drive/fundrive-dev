@@ -1,0 +1,122 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  schedule:
+    # 每天 01:17 UTC（北京时间 09:17）—— 只为跑 submodule-freshness。
+    - cron: "17 1 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    # 定时触发只为查指针，不必重跑 lint
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Shell syntax
+        run: for f in scripts/*.sh; do bash -n "$f"; done
+
+      - name: ShellCheck
+        run: shellcheck scripts/*.sh
+
+      - name: App registry consistency
+        # scripts/setup.sh 的 APP_REGISTRY 是唯一来源，README 与 docs 的表格是手写副本。
+        # 这一步就是「两处不一致是缺陷」那句话的执行者。
+        run: bash scripts/check-apps.sh
+
+  smoke:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: 参数校验必须大声失败
+        run: |
+          assert_exit2() {
+            local desc="$1"; shift
+            local code=0
+            bash scripts/setup.sh "$@" >/dev/null 2>&1 || code=$?
+            [ "$code" -eq 2 ] || {
+              echo "FAIL [$desc] setup.sh $* 退出码 $code，应为 2"
+              exit 1
+            }
+            echo "ok   [$desc]"
+          }
+          assert_exit2 "未知 action"        frobnicate core
+          assert_exit2 "未知 target"        install-dev nope
+          assert_exit2 "参数过多"           install-dev core 1.0.0 extra
+          assert_exit2 "install-dev 不收版本号" install-dev core 1.0.0
+          assert_exit2 "rollback 缺版本号"  rollback core
+          assert_exit2 "无 service app"     start all
+          assert_exit2 "package 不接 service action" start core
+
+      - name: install-dev all 必须真的能装上
+        run: |
+          uv venv                      # setup.sh 认仓库根的 .venv
+          bash scripts/setup.sh install-dev all
+
+      - name: 装完必须能 import
+        # 四个驱动包共用 fundrives 这个 PEP 420 隐式命名空间包。一旦有谁在自己的
+        # src/fundrives/ 下加了 __init__.py，它会把另外三个的 portion 遮掉 ——
+        # 只有「四个装在同一个环境里再一起 import」能抓到这种回归。
+        run: |
+          .venv/bin/python -c "import fundrive; print('fundrive', fundrive.__file__)"
+          .venv/bin/python -c "
+          import fundrives.aliopen, fundrives.baidu, fundrives.lanzou, fundrives.quark
+          print('fundrives portions:', len(list(fundrives.__path__)))
+          assert len(list(fundrives.__path__)) == 4, fundrives.__path__
+          "
+
+  submodule-freshness:
+    # 不做 PR 门禁：app 仓库有新 commit 不该让本仓库无关的 PR 变红。
+    # 每天定时跑一次，落后就失败 —— 这正是 002 禁止的「app 已 push、指针没提交」状态。
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 指针是否落后各 app 的跟踪分支
+        # 读的是 HEAD 这个 commit 里记录的 gitlink，而不是 git submodule status ——
+        # 后者在子模块已检出时报的是工作树的 commit，会把「已拉新但没提交指针」看成同步。
+        run: |
+          stale=0
+          while read -r _ type recorded path; do
+            [ "$type" = commit ] || continue
+            url="$(git config --file .gitmodules --get "submodule.${path}.url")"
+            branch="$(git config --file .gitmodules --get "submodule.${path}.branch" || echo master)"
+            remote="$(git ls-remote "$url" "refs/heads/${branch}" | cut -f1)"
+            if [ -z "$remote" ]; then
+              echo "FAIL $path: 取不到 $url 的 $branch"
+              stale=$((stale + 1))
+            elif [ "$recorded" = "$remote" ]; then
+              echo "ok   $path @ ${recorded:0:8}"
+            else
+              echo "FAIL $path: 指针 ${recorded:0:8}，${branch} 已到 ${remote:0:8}"
+              stale=$((stale + 1))
+            fi
+          done < <(git ls-tree HEAD apps/)
+          if [ "$stale" -gt 0 ]; then
+            echo
+            echo "$stale 个子模块指针落后。按 docs/project/project-governance/002-local-development.md："
+            echo "  git submodule update --remote && git add apps/* && git commit"
+            exit 1
+          fi
