@@ -2,7 +2,8 @@
 
 本文档包收录适用于整个 `fundrive-dev` 工作区的治理约定：工作区形态、本地开发怎么起环境、
 应用怎么分类、发布链路怎么走。产品、设计、技术、测试四类文档按功能拆在
-`docs/product|design|development|testing/<feature-slug>/` 下，不放在这里。
+`docs/product|design|development|testing/<feature-slug>/` 下，不放在这里 —— 目前有
+[驱动接口契约与开发规范](../../development/driver-contract/001-overview.md)一个。
 
 ## 章节目录
 

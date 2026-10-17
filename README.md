@@ -81,8 +81,15 @@ action 分组（两组的 `all` 含义不同）、交互菜单行为、共享版
 
 ## 文档
 
-从[项目治理总览](docs/project/project-governance/001-overview.md)开始 —— 它是文档入口，含完整索引。
-跨 app 的产品级文档集中在本仓库 `docs/` 下，各 app 仓库不维护自己的 `docs/` 包。
+跨 app 的产品级与技术级文档集中在本仓库 `docs/` 下，各 app 仓库不维护自己的 `docs/` 包。
+目前两个文档包：
+
+| 文档包 | 内容 |
+| --- | --- |
+| [项目治理](docs/project/project-governance/001-overview.md) | 工作区形态、子模块纪律、应用分类、发布链路、已知偏差 |
+| [驱动接口契约与开发规范](docs/development/driver-contract/001-overview.md) | 统一 `BaseDrive` 接口的规范基准，以及怎么写一个合规驱动 —— 对核心库内置驱动和四个独立驱动包同时生效 |
+
+两个包都从 `001-overview.md` 进，那是各自的入口和索引。
 在本仓库动手前先读 [CLAUDE.md](CLAUDE.md)，那是最容易踩的几条约定的速查版。
 
 ---

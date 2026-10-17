@@ -28,25 +28,33 @@
 **边界**：这条只覆盖 package app 的 release action。service app 的生命周期 action 一律转发，
 进程逻辑永远留在 app 自己仓库里。
 
-## 2. `apps/fundrive` 自己维护了一个 `docs/` 包
+## 2. `apps/fundrive` 的 `docs/` 包已拆解（已消解，留档）
 
-**现状**：`apps/fundrive/docs/` 下有 `API.md`、`QUICK_START.md`、`DEVELOPMENT_GUIDE.md`、
-`OPTIMIZATION_GUIDE.md`、`AUDIT-2026-07.md`，根目录还有 `INTERFACE-OPTIMIZATION.md`。
-规范要求 `apps/<name>` 不维护自己的 `docs/` 包，跨仓库与产品级文档集中到 dev 仓库的
-`docs/`（例外只有 nested workspace app 和专职的 `<product>-doc` 仓库，`fundrive` 两者都不是）。
+**原状**：`apps/fundrive/docs/` 下有 `API.md`、`QUICK_START.md`、`DEVELOPMENT_GUIDE.md`、
+`OPTIMIZATION_GUIDE.md`、`AUDIT-2026-07.md`，根目录还有 `INTERFACE-OPTIMIZATION.md`
+（合计 2266 行）。规范要求 `apps/<name>` 不维护自己的 `docs/` 包，跨仓库与产品级文档集中到
+dev 仓库的 `docs/`。产品级内容（接口规范、开发规范）和 app 级内容（这个库怎么用）混在一个
+仓库里，跨 app 的内容没有归属地。
 
-**影响**：产品级内容（接口规范、开发规范、审计记录）和 app 级内容（这个库怎么用）混在一个
-仓库里，跨 app 的内容没有归属地。另外这些文件名不符合 `NNN-kebab-case.md` 的文档包编号规范。
+**2026-10-17 的处置**：逐篇定性后分两类。
 
-**为什么本轮不动**：迁移要在 `fundrive` 仓库里删文件、在本仓库里新建文档包，是一个跨两个
-仓库的内容搬运 —— 而且得先逐篇判断哪些是真正跨 app 的产品文档（该迁）、哪些是
-`fundrive` 这个库自己的用法说明（该留，只是不该叫 `docs/` 包）。这是内容归属决策，
-不是机械移动。
+| 原位置 | 定性 | 去处 |
+| --- | --- | --- |
+| `INTERFACE-OPTIMIZATION.md` | 跨 app：统一接口的规范基准 | 本仓库 [`docs/development/driver-contract/002-interface-contract.md`](../../development/driver-contract/002-interface-contract.md) |
+| `docs/DEVELOPMENT_GUIDE.md` | 跨 app：怎么写一个合规驱动 | 本仓库 [`003-driver-development.md`](../../development/driver-contract/003-driver-development.md) |
+| `docs/API.md` | app 级：这个库的 API 参考 | `fundrive` 根目录 `API.md` |
+| `docs/OPTIMIZATION_GUIDE.md` | app 级：这个库的功能说明 | `fundrive` 根目录 `OPTIMIZATION.md` |
+| `docs/AUDIT-2026-07.md` | 单仓库某个 commit 的一次性审计 | `fundrive` 的 `archive/`，标记不再更新 |
+| `docs/QUICK_START.md` | 对 README 的纯转发 | 删除，独有内容并入 README 文档导航 |
 
-**消除前提**：逐篇定性后分两步走：真正跨 app 的部分迁入本仓库
-`docs/development/<feature-slug>/` 并按 `001-overview.md` 起编号；`fundrive` 自己的用法说明
-收进它的 `README.md` 或保留为非 `docs/` 包的单文件。迁完删旧路径，不让两套 canonical path
-长期并存。
+判定两篇为「跨 app」的依据：它们约束的是**五个仓库**的共同行为 —— 核心库内置的 drive 与四个
+独立驱动包都要照着实现。放在 `fundrive` 一家，另外四个包的贡献者没有理由去那里找规范。
+
+**代价**：外部指向 `fundrive/docs/*` 的链接全部失效，包括已发布版本的 PyPI 页面里可能存在的
+引用。仓库内 12 处引用已跟随修正；`CHANGELOG.md` 与归档审计记录里的旧路径**刻意不改**，
+那是历史记录。
+
+**连带**：本仓库因此有了第二个文档区域 `docs/development/`，第 5 条随之部分消解。
 
 ## 3. 共享版本号已把四个驱动包从 1.x 并到 2.0.90（已执行，留档）
 
@@ -91,12 +99,13 @@
 然后把上面三处「独立包」的说明一起改掉 —— 三处都由 `scripts/check-apps.sh` 盯着类别列，
 但「独立包」这句说明是散文，改的时候别漏。
 
-## 5. `docs/` 目前只有 `project/` 一个区域
+## 5. `docs/` 目前只有 `project/` 与 `development/` 两个区域
 
 **现状**：文档包规范定义了 `product|design|development|testing|retrospective|release`
-六个生命周期区域，本仓库目前只有 `docs/project/project-governance/`。
+六个生命周期区域，本仓库目前有两个：`docs/project/project-governance/` 与
+`docs/development/driver-contract/`（后者由第 2 条的迁移带来）。
 
 **为什么是这样**：空目录放一个占位 `001-overview.md` 是造假 —— 这些区域要有真实的功能文档
-包才值得建。按需要新增：有了跨 app 的架构或接口契约文档就建
-`docs/development/<feature-slug>/`，有了协调发布就建 `docs/release/<date>-<issue-key>-<slug>/`，
-每个包一律从 `001-overview.md` 起编号。
+包才值得建。`docs/development/` 正是这样长出来的：第 2 条有了两篇真实的跨 app 契约文档，
+它才建起来。其余四个区域按同样的标准按需新增：有了协调发布就建
+`docs/release/<date>-<issue-key>-<slug>/`，每个包一律从 `001-overview.md` 起编号。
