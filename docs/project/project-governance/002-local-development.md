@@ -81,7 +81,7 @@ bash scripts/setup.sh install-dev baidu  # 只装某一个
 release action 会真的装包，所以需要一个明确的目标环境：激活的 venv、仓库根的 `.venv`，
 或显式 `FUNDRIVE_INSTALL_SYSTEM=1`。三者都没有时脚本直接报错，**不会**默默装进系统 python。
 
-单个 app 自己跑测试时在它目录里用 uv（五个 app 都是 `pyproject.toml` + `uv.lock`）：
+单个 app 自己跑测试时在它目录里用 uv（五个 app 都是 uv 管理的 Python 包）：
 
 ```bash
 cd apps/fundrive
@@ -92,3 +92,15 @@ uv run pytest
 
 这两条路不要混用：`install-dev` 装进的是仓库根的环境（跨 app 联调用），`uv sync` 装进的是
 `apps/<name>/.venv`（单 app 测试用）。
+
+## 依赖解析不锁版本
+
+五个 app 的 `uv.lock` **都在各自的 `.gitignore` 里**，不受版本控制。这是刻意的：它们是库而不是
+应用，锁死传递依赖会把约束强加给下游。
+
+代价要知道：`uv sync` 每次（本地和 CI 都一样）都重新解析依赖，所以**一个传递依赖发新版就可能
+让 CI 变红，而本仓库一行代码都没动**。对库来说这是想要的信号 —— 早一天发现上游破坏兼容，
+总比等用户报障好。但排查 CI 失败时要记住这一点：先看是不是依赖变了，别一头扎进自己的 diff。
+
+各 app 对外声明的依赖都是 `>=` 下界约束；抬下界由 `funbuild latest-deps` 负责，不是手改
+`pyproject.toml`（见 [003-release-and-entrypoint.md](./003-release-and-entrypoint.md)）。

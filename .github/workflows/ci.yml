@@ -35,6 +35,9 @@ jobs:
         # 这一步就是「两处不一致是缺陷」那句话的执行者。
         run: bash scripts/check-apps.sh
 
+      - name: Markdown relative links
+        run: bash scripts/check-links.sh
+
   smoke:
     if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
