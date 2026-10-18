@@ -52,6 +52,7 @@ bash -n scripts/*.sh
 shellcheck scripts/*.sh          # CI 要求零 finding，info 级也算
 bash scripts/check-apps.sh       # app 清单在脚本与三张文档表格之间是否一致
 bash scripts/check-links.sh      # 文档里的相对链接是否都能解析
+bash scripts/check-lint-baseline.sh   # 五个 app 的 ruff select/ignore 是否逐字一致
 ```
 
 `scripts/setup.sh` 的 release action 会真的装包，需要一个明确的目标环境：激活的 venv、

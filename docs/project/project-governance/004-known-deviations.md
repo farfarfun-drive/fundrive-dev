@@ -109,3 +109,55 @@ dev 仓库的 `docs/`。产品级内容（接口规范、开发规范）和 app 
 包才值得建。`docs/development/` 正是这样长出来的：第 2 条有了两篇真实的跨 app 契约文档，
 它才建起来。其余四个区域按同样的标准按需新增：有了协调发布就建
 `docs/release/<date>-<issue-key>-<slug>/`，每个包一律从 `001-overview.md` 起编号。
+
+## 6. 五个仓库共用一套 ruff 规则基线（已决定，留档）
+
+**原状**：五个仓库的 lint 配置各不相同，而且两个仓库根本没写 `select`。
+`fundrive-alipan` 完全没有 ruff 配置，`fundrive-baidu` 只写了 `ignore`，两者都在吃 ruff 的
+默认规则集 —— 而默认集会随 ruff 升级变宽，于是 CI 的红绿取决于当天装到哪个 ruff 版本，
+而不是代码改了什么。另外三家各自写了一套，严格度从 5 组规则到 10 组不等。
+
+**2026-10-18 的处置**：五个仓库的 `[tool.ruff.lint]` 用**逐字相同**的 select / ignore：
+
+```toml
+select = ["E4","E7","E9","F","I","UP","B","SIM","RET","C4","PLE","T100","S102"]
+ignore = ["E501", "PLE1205"]
+```
+
+只有三处允许按仓库不同，每处都有理由：
+
+| 允许的差异 | 哪个仓库 | 理由 |
+| --- | --- | --- |
+| `target-version` | 各自 | 必须与自己的 `requires-python` 下界一致 |
+| `per-file-ignores` | fundrive / fundrive-lanzou | 前者放开 example 里的 `print`（T201）；后者的 `core.py` 是第三方派生代码，星号导入只在这一个文件里，所以收窄成单文件忽略而不是全仓库放弃 F403/F405 |
+| `extend-select` | fundrive-quark | 它对 `BLE` 与 `DTZ` 已经是干净的，没理由跟着基线放宽 |
+
+**基线为什么不含 BLE 与 DTZ**：
+
+- `BLE001`（blind-except）在 `fundrive` 里有 **363 处**。包装 25 个云服务 API 时「任何异常
+  都转成返回值」是它的错误处理架构，不是疏忽。逐个收窄等于重新设计错误模型，不是 lint
+  顺手能做的事。
+- `DTZ`（naive datetime）全工作区 9 处。改成 tz-aware 会改变对用户显示的时间，属于行为
+  变更，要连同「该显示本地时间还是 UTC」一起决定。
+
+两条都是「现在不做」，不是「永远不做」。真要做，各自单独一轮。
+
+**统一过程中查出来的真实缺陷**（lint 的实际收益不在风格，在这些）：
+
+1. `fundrive-lanzou` 上传小文件时，HTTP 413（文件超限）那条返回路径漏了
+   `file.close()`，其余三条都有；`result.json()` 等处抛异常时同样漏。整段改用
+   `with open(...)` 后任何出口都会关。已补回归测试。
+2. `fundrive-baidu` 的 `SimpleCryptography.encrypt()` / `.decrypt()` 把数据拷成**不可变的
+   `bytes`** 再交给原地改写的 `crypt()`，任何调用都直接 `TypeError` —— 这条加密路径从来
+   没能跑通，也没有任何测试碰过。已修并补回归测试。
+3. `fundrive-baidu` 的 `RAPID_UPLOAD_TABLE_COLS` 把建表 DDL 里的 `UNIQUE(...)` 约束行当成
+   列名，解析出 14 个名字而 `SELECT *` 只有 13 列。结果一直是对的，纯粹因为 `zip()` 按较短
+   的一边截断 —— 给 zip 加 `strict=True` 会立刻炸。已修解析器并补 `strict=True`。
+4. `fundrive` 的 `oss` 驱动把 `*args` 写在关键字参数之后，`args` 有 3 个以上元素就会与
+   `connect_timeout` 撞成 `TypeError`。已调换顺序（行为等价）。
+5. `fundrive` 的 `wenshushu` 驱动把 `os.cpu_count()` 写在默认参数里（import 期求值一次）。
+
+**改动这套基线的纪律**：改任何一条都要同步到五个仓库。这条纪律有机器把关 ——
+`scripts/check-lint-baseline.sh` 读五个 `pyproject.toml`，比对 select / ignore 是否逐字
+一致，不一致就退出 1，CI 的 lint job 会跑它。统一是一次性动作，不退化才是难的：谁在某个
+仓库顺手加一条 `ignore` 把 CI 弄绿，统一就散了。

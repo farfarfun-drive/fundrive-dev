@@ -38,6 +38,11 @@ jobs:
       - name: Markdown relative links
         run: bash scripts/check-links.sh
 
+      - name: Ruff baseline is identical across apps
+        # 五个 app 共用一套 select/ignore（004 第 6 条）。统一只是一次性动作，
+        # 这一步防的是退化：谁顺手加条 ignore 把自己仓库弄绿，统一就散了。
+        run: bash scripts/check-lint-baseline.sh
+
   smoke:
     if: github.event_name != 'schedule'
     runs-on: ubuntu-latest

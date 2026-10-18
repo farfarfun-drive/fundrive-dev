@@ -67,6 +67,7 @@ bash scripts/setup.sh                           # 不带参数：gum 交互选 a
 bash scripts/build.sh                           # = funbuild build，构建 + 发布 + 统一 push
 bash scripts/check-apps.sh                      # 校验 app 清单在脚本与文档间一致
 bash scripts/check-links.sh                     # 校验文档里的相对链接不断
+bash scripts/check-lint-baseline.sh             # 校验五个 app 的 ruff 基线一致
 ```
 
 `setup.sh` 的 release action 会真的装包，需要一个明确的目标环境（激活的 venv、仓库根的
