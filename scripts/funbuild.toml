@@ -1,1 +1,8 @@
-version = "2.0.91"
+version = "2.0.96"
+packages = [
+  "fundrive-alipan",
+  "fundrive-baidu",
+  "fundrive-lanzou",
+  "fundrive-quark",
+  "fundrive",  
+]
