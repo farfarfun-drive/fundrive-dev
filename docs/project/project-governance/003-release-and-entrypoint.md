@@ -22,9 +22,10 @@
 | `alipan` | `apps/fundrive-alipan` | package | 阿里云盘开放平台 API 封装，纯库 |
 | `baidu` | `apps/fundrive-baidu` | package | 百度网盘 PCS API 封装，纯库 |
 | `lanzou` | `apps/fundrive-lanzou` | package | 蓝奏云 API 封装，纯库 |
+| `pan115` | `apps/fundrive-pan115` | package | 115 网盘 API 封装（从 `p115client` 迁入自主维护），纯库 |
 | `quark` | `apps/fundrive-quark` | package | 夸克网盘 Web API 封装，纯库；核心库无对应 drive 与 extra，独立发布 |
 
-**五个全是 package app。** 本工作区目前没有 service app，也没有 nested workspace app。
+**六个全是 package app。** 本工作区目前没有 service app，也没有 nested workspace app。
 登记表里因此没有任何 `service` 项，`start` 之类的 action 没有可用目标 —— 这是如实反映现状，
 不是漏填。将来 fundrive 长出带进程的 app（例如 `fundrive-api` HTTP 服务或一个同步守护
 进程）时，**在 `APP_REGISTRY` 里加一行、类别写 `service` 就够了**：可选 target、`all` 的
@@ -39,7 +40,7 @@
 | 组 | action | `all` 展开为 |
 | --- | --- | --- |
 | service | `start` `stop` `restart` `run` `status` | 仅 service app —— 本工作区为空，`start all` 直接报错 |
-| release | `install-dev` `install-prod [version]` `upgrade [version]` `rollback <version>` | service + package app：`core alipan baidu lanzou quark` |
+| release | `install-dev` `install-prod [version]` `upgrade [version]` `rollback <version>` | service + package app：`core alipan baidu lanzou pan115 quark` |
 
 ### 两组 action 由谁执行
 
@@ -86,7 +87,7 @@
    提交 —— 不是每个 app 一次 push。
 
 子模块的处理顺序由 `git submodule status` 的输出决定（按路径字典序：`fundrive`、
-`fundrive-alipan`、`fundrive-baidu`、`fundrive-lanzou`、`fundrive-quark`），所以核心库
+`fundrive-alipan`、`fundrive-baidu`、`fundrive-lanzou`、`fundrive-pan115`、`fundrive-quark`），所以核心库
 先于驱动构建。这不影响正确性：核心库对驱动的引用是 extras 里的下界约束（`>=`），
 在安装时才解析，不要求构建期拿到驱动的新版本。
 

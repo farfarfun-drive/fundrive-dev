@@ -3,6 +3,7 @@ packages = [
   "fundrive-alipan",
   "fundrive-baidu",
   "fundrive-lanzou",
+  "fundrive-pan115",
   "fundrive-quark",
-  "fundrive",  
+  "fundrive",
 ]

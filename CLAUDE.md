@@ -30,7 +30,7 @@ bash scripts/check-apps.sh      # 不一致就退出 1，CI 也跑这个
 ```
 
 类别（`service` / `package`）由「有东西把它当长驻进程启动吗」决定，不从仓库名后缀推断。
-五个 app 目前全是 `package`。
+六个 app 目前全是 `package`。
 
 ## 3. 共享版本号不要手改
 

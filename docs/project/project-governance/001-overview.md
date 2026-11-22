@@ -29,9 +29,10 @@ commit / push：
 | `apps/fundrive-alipan` | `farfarfun-drive/fundrive-alipan` | `alipan` | package（驱动） |
 | `apps/fundrive-baidu` | `farfarfun-drive/fundrive-baidu` | `baidu` | package（驱动） |
 | `apps/fundrive-lanzou` | `farfarfun-drive/fundrive-lanzou` | `lanzou` | package（驱动） |
+| `apps/fundrive-pan115` | `farfarfun-drive/fundrive-pan115` | `pan115` | package（驱动） |
 | `apps/fundrive-quark` | `farfarfun-drive/fundrive-quark` | `quark` | package（驱动，独立包） |
 
-本工作区目前**没有** service 类应用，也**没有** nested workspace 类应用 —— 五个 app 全是
+本工作区目前**没有** service 类应用，也**没有** nested workspace 类应用 —— 六个 app 全是
 只被 `import` / `pip install` 的库，没有任何东西把它们当长驻进程启动。分类依据见
 [003-release-and-entrypoint.md](./003-release-and-entrypoint.md)。
 
@@ -41,26 +42,27 @@ commit / push：
 ## 依赖关系
 
 `fundrive` 核心库定义统一的 `BaseDrive` 接口与各网盘 drive 实现
-（`src/fundrive/drives/<name>/`）；四个驱动仓库是底层网盘 API 的封装，被核心库通过
+（`src/fundrive/drives/<name>/`）；五个驱动仓库是底层网盘 API 的封装，其中四个被核心库通过
 **可选依赖（extras）** 引用，而不是必装依赖：
 
 ```
 fundrive[alipan] -> aligo + fundrive-alipan
 fundrive[baidu]  -> fundrive-baidu
 fundrive[lanzou] -> fundrive-lanzou + funfile
+fundrive[pan115] -> fundrive-pan115 + funfile
 ```
 
-因此这三个驱动仓库既服务于 `fundrive`，也可以被第三方项目单独 `pip install` 使用 ——
+因此这四个驱动仓库既服务于 `fundrive`，也可以被第三方项目单独 `pip install` 使用 ——
 它们不是 `fundrive` 的内部实现细节。
 
 `fundrive-quark` **不在这个依赖关系里**：核心库既没有 `quark` drive 也没有 `quark` extra，
 它只作为独立包发布给第三方直接安装。这是已经定下来的定位，不是漏接 —— 见
 [004-known-deviations.md](./004-known-deviations.md) 第 4 条。
 
-四个驱动包都把代码装进 `fundrives` 这个 **PEP 420 隐式命名空间包**
-（`fundrives.aliopen` / `fundrives.baidu` / `fundrives.lanzou` / `fundrives.quark`），
-四个发行包因此能共存在同一个环境里。谁要是在自己的 `src/fundrives/` 下加了 `__init__.py`，
-就会把另外三个的 portion 遮掉 —— CI 的 `smoke` job 会把四个装在一起再一并 import 来守这条。
+五个驱动包都把代码装进 `fundrives` 这个 **PEP 420 隐式命名空间包**
+（`fundrives.aliopen` / `fundrives.baidu` / `fundrives.lanzou` / `fundrives.pan115` / `fundrives.quark`），
+五个发行包因此能共存在同一个环境里。谁要是在自己的 `src/fundrives/` 下加了 `__init__.py`，
+就会把另外四个的 portion 遮掉 —— CI 的 `smoke` job 会把五个装在一起再一并 import 来守这条。
 
 ## 约定来源
 

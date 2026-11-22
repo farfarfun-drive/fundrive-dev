@@ -20,6 +20,7 @@ readonly -a APP_REGISTRY=(
   "alipan|apps/fundrive-alipan|fundrive-alipan|package"
   "baidu|apps/fundrive-baidu|fundrive-baidu|package"
   "lanzou|apps/fundrive-lanzou|fundrive-lanzou|package"
+  "pan115|apps/fundrive-pan115|fundrive-pan115|package"
   "quark|apps/fundrive-quark|fundrive-quark|package"
 )
 

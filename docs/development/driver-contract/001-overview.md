@@ -3,7 +3,7 @@
 本文档包是**跨仓库**的技术契约：`fundrive` 核心库定义的统一 `BaseDrive` 接口长什么样，
 以及怎么写一个符合规范的网盘驱动。它对**所有**驱动实现生效 —— 核心库里的
 `src/fundrive/drives/<name>/`，以及 `fundrive-alipan` / `fundrive-baidu` /
-`fundrive-lanzou` / `fundrive-quark` 四个独立驱动包。
+`fundrive-lanzou` / `fundrive-pan115` / `fundrive-quark` 五个独立驱动包。
 
 正因为它跨这五个仓库，所以留在本编排仓库，而不是任何单个 app 里。
 

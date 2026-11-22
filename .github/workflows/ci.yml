@@ -82,15 +82,15 @@ jobs:
           bash scripts/setup.sh install-dev all
 
       - name: 装完必须能 import
-        # 四个驱动包共用 fundrives 这个 PEP 420 隐式命名空间包。一旦有谁在自己的
-        # src/fundrives/ 下加了 __init__.py，它会把另外三个的 portion 遮掉 ——
-        # 只有「四个装在同一个环境里再一起 import」能抓到这种回归。
+        # 五个驱动包共用 fundrives 这个 PEP 420 隐式命名空间包。一旦有谁在自己的
+        # src/fundrives/ 下加了 __init__.py，它会把另外四个的 portion 遮掉 ——
+        # 只有「五个装在同一个环境里再一起 import」能抓到这种回归。
         run: |
           .venv/bin/python -c "import fundrive; print('fundrive', fundrive.__file__)"
           .venv/bin/python -c "
-          import fundrives.aliopen, fundrives.baidu, fundrives.lanzou, fundrives.quark
+          import fundrives.aliopen, fundrives.baidu, fundrives.lanzou, fundrives.pan115, fundrives.quark
           print('fundrives portions:', len(list(fundrives.__path__)))
-          assert len(list(fundrives.__path__)) == 4, fundrives.__path__
+          assert len(list(fundrives.__path__)) == 5, fundrives.__path__
           "
 
   submodule-freshness:

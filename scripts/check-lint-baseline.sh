@@ -65,8 +65,8 @@ done
 
 printf '\n'
 if [[ ${fail_count} -gt 0 ]]; then
-  printf '%d 个仓库的 ruff 基线不一致。要改基线就五个一起改 —— 理由写进\n' "${fail_count}" >&2
+  printf '%d 个仓库的 ruff 基线不一致。要改基线就全部仓库一起改 —— 理由写进\n' "${fail_count}" >&2
   printf 'docs/project/project-governance/004-known-deviations.md 第 6 条。\n' >&2
   exit 1
 fi
-printf '五个仓库的 ruff 规则基线一致。\n'
+printf '%d 个仓库的 ruff 规则基线一致。\n' "${#PATHS[@]}"

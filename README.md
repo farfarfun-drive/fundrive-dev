@@ -11,17 +11,18 @@ fundrive 联合开发仓库，通过 Git 子模块固定统一网盘接口核心
 | `apps/fundrive-alipan` | `alipan` | package | [fundrive-alipan](https://github.com/farfarfun-drive/fundrive-alipan) | 阿里云盘开放平台 API 封装：扫码登录、文件列表/搜索、上传下载、分享 |
 | `apps/fundrive-baidu` | `baidu` | package | [fundrive-baidu](https://github.com/farfarfun-drive/fundrive-baidu) | 百度网盘 PCS API 封装：上传下载、移动复制、离线下载、分享转存 |
 | `apps/fundrive-lanzou` | `lanzou` | package | [fundrive-lanzou](https://github.com/farfarfun-drive/fundrive-lanzou) | 蓝奏云 API 封装：登录、文件/文件夹列表、上传下载、分享提取 |
+| `apps/fundrive-pan115` | `pan115` | package | [fundrive-pan115](https://github.com/farfarfun-drive/fundrive-pan115) | 115 网盘 API 封装：从 `p115client` 迁入并自主维护，提供 `fundrives.pan115` |
 | `apps/fundrive-quark` | `quark` | package | [fundrive-quark](https://github.com/farfarfun-drive/fundrive-quark) | 夸克网盘 Web API 封装：分享链接解析、转存、文件列表、批量分享。**独立包**，见下 |
 
-**五个 app 全是 package 类**：只会被 `import` / `pip install` 成依赖，没有任何东西把它们当
+**六个 app 全是 package 类**：只会被 `import` / `pip install` 成依赖，没有任何东西把它们当
 长驻进程启动，因此本工作区目前没有 service 类应用。「类别」决定哪些 action 对它有效，
 分类依据见[发布与进程入口约定](docs/project/project-governance/003-release-and-entrypoint.md)。
 
 这张表是手写副本，唯一来源是 `scripts/setup.sh` 的 `APP_REGISTRY`；
 `bash scripts/check-apps.sh` 负责比对两者（CI 会跑），不一致就失败。
 
-三个驱动仓库被核心库通过**可选依赖（extras）** 引用（`fundrive[alipan]`、`fundrive[baidu]`、
-`fundrive[lanzou]`），同时也可以被第三方项目单独安装使用。
+四个驱动仓库被核心库通过**可选依赖（extras）** 引用（`fundrive[alipan]`、`fundrive[baidu]`、
+`fundrive[lanzou]`、`fundrive[pan115]`），同时也可以被第三方项目单独安装使用。
 **`fundrive-quark` 是独立包**：核心库里既没有 `quark` drive 也没有 `quark` extra，
 不能通过 `fundrive[quark]` 使用，要用就直接 `pip install fundrive-quark`
 （取舍见[已知治理偏差](docs/project/project-governance/004-known-deviations.md)第 4 条）。

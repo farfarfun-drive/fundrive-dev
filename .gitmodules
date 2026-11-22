@@ -18,3 +18,7 @@
 	path = apps/fundrive-quark
 	url = https://github.com/farfarfun-drive/fundrive-quark.git
 	branch = master
+[submodule "apps/fundrive-pan115"]
+	path = apps/fundrive-pan115
+	url = https://github.com/farfarfun-drive/fundrive-pan115.git
+	branch = master
