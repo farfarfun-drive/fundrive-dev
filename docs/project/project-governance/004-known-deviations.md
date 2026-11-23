@@ -130,7 +130,7 @@ ignore = ["E501", "PLE1205"]
 | --- | --- | --- |
 | `target-version` | 各自 | 必须与自己的 `requires-python` 下界一致 |
 | `per-file-ignores` | fundrive / fundrive-lanzou / fundrive-pan115 | `fundrive` 放开 example 里的 `print`（T201）；`fundrive-lanzou` 的 `core.py` 是第三方派生代码，星号导入收窄到单文件忽略；`fundrive-pan115` 对上游 `p115client` 派生源码及 `_vendor/` 做细粒度收窄忽略 |
-| `extend-select` | fundrive-alipan / fundrive-baidu / fundrive-lanzou / fundrive-quark / fundrive | 四个独立驱动包已对 `BLE` 与 `DTZ` 全部清零，开启 `extend-select = ["BLE", "DTZ"]`；核心库 `fundrive` 已对 `DTZ` 清零，开启 `extend-select = ["DTZ"]`，锁死不回退 |
+| `extend-select` | fundrive-alipan / fundrive-baidu / fundrive-lanzou / fundrive-quark / fundrive | 四个独立驱动包已对 `BLE`、`DTZ`、`RUF012`、`RUF013` 全部清零，开启 `extend-select = ["BLE", "DTZ", "RUF012", "RUF013"]`；核心库 `fundrive` 已对 `DTZ`、`RUF012`、`RUF013` 清零，开启 `extend-select = ["DTZ", "RUF012", "RUF013"]`，锁死不回退 |
 
 **基线为什么不含 BLE 与 DTZ**：
 
