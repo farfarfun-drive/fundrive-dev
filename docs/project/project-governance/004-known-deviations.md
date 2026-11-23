@@ -129,16 +129,13 @@ ignore = ["E501", "PLE1205"]
 | 允许的差异 | 哪个仓库 | 理由 |
 | --- | --- | --- |
 | `target-version` | 各自 | 必须与自己的 `requires-python` 下界一致 |
-| `per-file-ignores` | fundrive / fundrive-lanzou | 前者放开 example 里的 `print`（T201）；后者的 `core.py` 是第三方派生代码，星号导入只在这一个文件里，所以收窄成单文件忽略而不是全仓库放弃 F403/F405 |
-| `extend-select` | fundrive-quark | 它对 `BLE` 与 `DTZ` 已经是干净的，没理由跟着基线放宽 |
+| `per-file-ignores` | fundrive / fundrive-lanzou / fundrive-pan115 | `fundrive` 放开 example 里的 `print`（T201）；`fundrive-lanzou` 的 `core.py` 是第三方派生代码，星号导入收窄到单文件忽略；`fundrive-pan115` 对上游 `p115client` 派生源码及 `_vendor/` 做细粒度收窄忽略 |
+| `extend-select` | fundrive-alipan / fundrive-baidu / fundrive-lanzou / fundrive-quark / fundrive | 四个独立驱动包已对 `BLE` 与 `DTZ` 全部清零，开启 `extend-select = ["BLE", "DTZ"]`；核心库 `fundrive` 已对 `DTZ` 清零，开启 `extend-select = ["DTZ"]`，锁死不回退 |
 
 **基线为什么不含 BLE 与 DTZ**：
 
-- `BLE001`（blind-except）在 `fundrive` 里有 **363 处**。包装 25 个云服务 API 时「任何异常
-  都转成返回值」是它的错误处理架构，不是疏忽。逐个收窄等于重新设计错误模型，不是 lint
-  顺手能做的事。
-- `DTZ`（naive datetime）全工作区 9 处。改成 tz-aware 会改变对用户显示的时间，属于行为
-  变更，要连同「该显示本地时间还是 UTC」一起决定。
+- `BLE001`（blind-except）在 `fundrive` 里有 **363 处**（另 `fundrive-pan115` 派生源码有 9 处）。包装 25 个云服务 API 时「任何异常都转成返回值」是核心库的错误处理架构，不是疏忽；逐个收窄等于重新设计错误模型，不是 lint 顺手能做的事。
+- `DTZ`（naive datetime）：原工作区 9 处已全部清零（`fundrive-lanzou` 6 处、`fundrive` 2 处、`fundrive-quark` 1 处），上述 5 个仓库已通过 `extend-select` 锁死；基线暂保留未升级，待 `fundrive-pan115` 上游派生代码评估后再统一决定是否并入基线。
 
 两条都是「现在不做」，不是「永远不做」。真要做，各自单独一轮。
 
