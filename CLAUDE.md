@@ -1,6 +1,6 @@
 # fundrive-dev
 
-编排仓库（dev repo）：本身不放应用代码，只记录五个子模块的 commit 指针，加跨仓库的
+编排仓库（dev repo）：本身不放应用代码，只记录六个子模块的 commit 指针，加跨仓库的
 `scripts/` 与 `docs/`。完整治理约定见
 [docs/project/project-governance/001-overview.md](docs/project/project-governance/001-overview.md)
 —— 那是文档入口，含索引。
@@ -34,7 +34,7 @@ bash scripts/check-apps.sh      # 不一致就退出 1，CI 也跑这个
 
 ## 3. 共享版本号不要手改
 
-五个包共用一个版本号，权威来源是 `scripts/funbuild.toml`，`funbuild` 每次 build 就地重写它。
+六个包共用一个版本号，权威来源是 `scripts/funbuild.toml`，`funbuild` 每次 build 就地重写它。
 **不要在文档或代码里复制这个值**，要读就读那个文件。版本号只能单调前进（原因见
 `004-known-deviations.md` 第 3 条）。
 
@@ -52,7 +52,7 @@ bash -n scripts/*.sh
 shellcheck scripts/*.sh          # CI 要求零 finding，info 级也算
 bash scripts/check-apps.sh       # app 清单在脚本与三张文档表格之间是否一致
 bash scripts/check-links.sh      # 文档里的相对链接是否都能解析
-bash scripts/check-lint-baseline.sh   # 五个 app 的 ruff select/ignore 是否逐字一致
+bash scripts/check-lint-baseline.sh   # 六个 app 的 ruff select/ignore 是否逐字一致
 ```
 
 `scripts/setup.sh` 的 release action 会真的装包，需要一个明确的目标环境：激活的 venv、

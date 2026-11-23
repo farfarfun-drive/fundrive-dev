@@ -11,12 +11,12 @@
 
 **现状**：`service-release-governance` / `bash-service-guide` 要求每个 app（package 类也
 一样）在自己仓库里提供 `scripts/setup.sh`，根脚本只做分发。本工作区**不这么做**：根
-`scripts/setup.sh` 的 release action 自己用 uv 把包装上，五个 app 仓库不需要 `scripts/`
+`scripts/setup.sh` 的 release action 自己用 uv 把包装上，六个 app 仓库不需要 `scripts/`
 目录。service action 仍然转发给 app 侧脚本，那条规矩没动。
 
-**为什么是这个取舍**：五个 app 全是没有 CLI、没有 `[project.scripts]`、没有进程的纯库
+**为什么是这个取舍**：六个 app 全是没有 CLI、没有 `[project.scripts]`、没有进程的纯库
 （`pyproject.toml` 已确认）。对它们而言「安装」就是一条 `uv pip install`，app 侧脚本只能是
-一层对包名做字符串拼接的转发，不增加任何能力，但要在五个独立仓库里复制五份、各自维护。
+一层对包名做字符串拼接的转发，不增加任何能力，但要在六个独立仓库里复制六份、各自维护。
 对照另一条路的成本：补五个脚本要让「dev 仓库规范化」这个变更横跨六个仓库、六次提交，
 而换来的是一层纯仪式的间接。
 
@@ -84,7 +84,7 @@ dev 仓库的 `docs/`。产品级内容（接口规范、开发规范）和 app 
 **现状**：`apps/fundrive-quark` 作为独立包发布（跟随共享版本号），但 `fundrive` 核心库里
 既没有 `src/fundrive/drives/quark/`，`pyproject.toml` 的 `[project.optional-dependencies]`
 里也没有 `quark` 这一项 —— 整个 `fundrive` 源码树里没有任何 `quark` 字样（已核）。
-另外三个驱动都有对应的 drive 实现与 extra。
+另外四个驱动包（`alipan`/`baidu`/`lanzou`/`pan115`）都有对应的 drive 实现与 extra。
 
 **决定**：**这是定位，不是漏接。** `fundrive-quark` 是给第三方直接
 `pip install fundrive-quark` 用的独立包，不通过 `fundrive[quark]` 暴露。这一点已经写进
@@ -110,7 +110,7 @@ dev 仓库的 `docs/`。产品级内容（接口规范、开发规范）和 app 
 它才建起来。其余四个区域按同样的标准按需新增：有了协调发布就建
 `docs/release/<date>-<issue-key>-<slug>/`，每个包一律从 `001-overview.md` 起编号。
 
-## 6. 五个仓库共用一套 ruff 规则基线（已决定，留档）
+## 6. 工作区仓库共用一套 ruff 规则基线（已决定，留档）
 
 **原状**：五个仓库的 lint 配置各不相同，而且两个仓库根本没写 `select`。
 `fundrive-alipan` 完全没有 ruff 配置，`fundrive-baidu` 只写了 `ignore`，两者都在吃 ruff 的
@@ -157,7 +157,7 @@ ignore = ["E501", "PLE1205"]
    `connect_timeout` 撞成 `TypeError`。已调换顺序（行为等价）。
 5. `fundrive` 的 `wenshushu` 驱动把 `os.cpu_count()` 写在默认参数里（import 期求值一次）。
 
-**改动这套基线的纪律**：改任何一条都要同步到五个仓库。这条纪律有机器把关 ——
-`scripts/check-lint-baseline.sh` 读五个 `pyproject.toml`，比对 select / ignore 是否逐字
+**改动这套基线的纪律**：改任何一条都要同步到全部六个仓库。这条纪律有机器把关 ——
+`scripts/check-lint-baseline.sh` 读全部 app 的 `pyproject.toml`，比对 select / ignore 是否逐字
 一致，不一致就退出 1，CI 的 lint job 会跑它。统一是一次性动作，不退化才是难的：谁在某个
 仓库顺手加一条 `ignore` 把 CI 弄绿，统一就散了。

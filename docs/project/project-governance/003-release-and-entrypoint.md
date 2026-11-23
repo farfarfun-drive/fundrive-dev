@@ -46,7 +46,7 @@
 
 这是本工作区对 skill 的一处有意偏离，写清楚免得下一个人以为是实现偷懒：
 
-- **release action 由本仓库直接执行**，不转发。五个 app 都是没有 CLI、没有进程的纯库，
+- **release action 由本仓库直接执行**，不转发。六个 app 都是没有 CLI、没有进程的纯库，
   「装一个包」就是一条 `uv pip install`：`install-dev` = `uv pip install --editable apps/<path>`，
   `install-prod` / `upgrade` / `rollback` = `uv pip install <pkg>[==<version>]`。
   让每个 app 仓库再背一个只包着 uv 的 `scripts/setup.sh` 是纯仪式，取舍留档见
@@ -83,7 +83,7 @@
 1. 递增 `scripts/funbuild.toml` 的共享版本号；
 2. 对 `apps/` 下每个已初始化、非 nested workspace 的子模块：切回远端默认分支（仅在
    detached 时）、`git pull`、转发 `funbuild build --version <共享版本号>`；
-3. 最后在本仓库统一 `funbuild push` + 打 tag **一次**，使五个子模块指针的更新落成一个
+3. 最后在本仓库统一 `funbuild push` + 打 tag **一次**，使六个子模块指针的更新落成一个
    提交 —— 不是每个 app 一次 push。
 
 子模块的处理顺序由 `git submodule status` 的输出决定（按路径字典序：`fundrive`、
@@ -115,4 +115,4 @@
 `bash-service-guide`；本编排仓库只负责把 action 转发进去，不代管它内部怎么实现。
 
 两类 app 都**不需要** `publish` / `build` 这样的 app 侧 action —— 发布是工作区级的动作，
-由共享版本号驱动，单个 app 自己发版会破坏「五个包同版本」这个前提。
+由共享版本号驱动，单个 app 自己发版会破坏「六个包同版本」这个前提。

@@ -15,12 +15,12 @@
 
 ## 工作区形态
 
-`fundrive-dev` 是编排仓库（dev repo），本身不放任何应用代码，只记录五个子模块的 commit
+`fundrive-dev` 是编排仓库（dev repo），本身不放任何应用代码，只记录六个子模块的 commit
 指针，加跨仓库的 `scripts/` 与 `docs/`。自身受版本控制的文件仅限：`README.md`、
 `CLAUDE.md`、`LICENSE`、`.gitmodules`、`.gitignore`、`.github/workflows/`、`scripts/`、
 `docs/`。
 
-五个子模块各自是独立 GitHub 仓库，有自己的 git 历史、issue 与发布节奏，要单独
+六个子模块各自是独立 GitHub 仓库，有自己的 git 历史、issue 与发布节奏，要单独
 commit / push：
 
 | 路径 | 仓库 | 别名 | 类别 |

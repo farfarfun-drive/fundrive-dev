@@ -1,6 +1,6 @@
 # 本地开发
 
-本章只写跨仓库的部分：怎么把五个子模块检出齐、改动落在哪个仓库、按什么顺序提交。
+本章只写跨仓库的部分：怎么把六个子模块检出齐、改动落在哪个仓库、按什么顺序提交。
 单个 app 的安装、配置与用法见各自仓库的 `README.md`。
 
 ## 检出
@@ -53,7 +53,7 @@ git 版本的默认行为（旧版 git 默认 `master`，2.28+ 默认远端 HEAD
 
 `--remote` 之后子模块通常处于 detached HEAD；`funbuild build` 会在构建前自己切回远端默认
 分支（只在确实 detached 时切，不打断手动切到的 feature 分支）。手工开发时如果要在子模块里
-提交，先自己 `git -C apps/<name> switch master`，或者用这条一次把五个都带到 master：
+提交，先自己 `git -C apps/<name> switch master`，或者用这条一次把六个都带到 master：
 
 ```bash
 git submodule foreach 'git checkout master && git pull --ff-only'
@@ -69,7 +69,7 @@ CI 的 `submodule-freshness` job 每天跑一次，比对 `HEAD` 里记录的指
 
 ## 本地安装与验证
 
-跨仓库的统一安装入口是 `scripts/setup.sh`。核心库与驱动联调时，一条命令把五个 app 全部从
+跨仓库的统一安装入口是 `scripts/setup.sh`。核心库与驱动联调时，一条命令把六个 app 全部从
 工作树可编辑安装 —— 之后改任何一个 app 的源码都立刻生效，不用重装：
 
 ```bash
@@ -81,7 +81,7 @@ bash scripts/setup.sh install-dev baidu  # 只装某一个
 release action 会真的装包，所以需要一个明确的目标环境：激活的 venv、仓库根的 `.venv`，
 或显式 `FUNDRIVE_INSTALL_SYSTEM=1`。三者都没有时脚本直接报错，**不会**默默装进系统 python。
 
-单个 app 自己跑测试时在它目录里用 uv（五个 app 都是 uv 管理的 Python 包）：
+单个 app 自己跑测试时在它目录里用 uv（六个 app 都是 uv 管理的 Python 包）：
 
 ```bash
 cd apps/fundrive
@@ -95,7 +95,7 @@ uv run pytest
 
 ## 依赖解析不锁版本
 
-五个 app 的 `uv.lock` **都在各自的 `.gitignore` 里**，不受版本控制。这是刻意的：它们是库而不是
+六个 app 的 `uv.lock` **都在各自的 `.gitignore` 里**，不受版本控制。这是刻意的：它们是库而不是
 应用，锁死传递依赖会把约束强加给下游。
 
 代价要知道：`uv sync` 每次（本地和 CI 都一样）都重新解析依赖，所以**一个传递依赖发新版就可能

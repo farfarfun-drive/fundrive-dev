@@ -59,7 +59,7 @@ git add apps/ && git commit
 ## 常用命令
 
 ```bash
-bash scripts/setup.sh install-dev all           # 五个 app 全部从工作树可编辑安装
+bash scripts/setup.sh install-dev all           # 六个 app 全部从工作树可编辑安装
 bash scripts/setup.sh install-prod core 2.0.91  # 从索引装指定版本，省略版本=最新
 bash scripts/setup.sh upgrade all
 bash scripts/setup.sh rollback core 2.0.90      # 版本号必填
@@ -68,14 +68,14 @@ bash scripts/setup.sh                           # 不带参数：gum 交互选 a
 bash scripts/build.sh                           # = funbuild build，构建 + 发布 + 统一 push
 bash scripts/check-apps.sh                      # 校验 app 清单在脚本与文档间一致
 bash scripts/check-links.sh                     # 校验文档里的相对链接不断
-bash scripts/check-lint-baseline.sh             # 校验五个 app 的 ruff 基线一致
+bash scripts/check-lint-baseline.sh             # 校验六个 app 的 ruff 基线一致
 ```
 
 `setup.sh` 的 release action 会真的装包，需要一个明确的目标环境（激活的 venv、仓库根的
 `.venv`，或显式 `FUNDRIVE_INSTALL_SYSTEM=1`），不会默默装进系统 python。
 
 `build` / `publish` **不是** `setup.sh` 的 action：构建发布由 `funbuild build` 自己 fan out，
-递增 `scripts/funbuild.toml` 的共享版本号后发布每个 app，最后统一 push 一次。五个包共用这一个
+递增 `scripts/funbuild.toml` 的共享版本号后发布每个 app，最后统一 push 一次。六个包共用这一个
 版本号，所以**驱动包的版本号不再独立反映各自的改动幅度**，读变更要看各仓库的 `CHANGELOG.md`。
 
 action 分组（两组的 `all` 含义不同）、交互菜单行为、共享版本号的来龙去脉，一律见
@@ -90,7 +90,7 @@ action 分组（两组的 `all` 含义不同）、交互菜单行为、共享版
 | 文档包 | 内容 |
 | --- | --- |
 | [项目治理](docs/project/project-governance/001-overview.md) | 工作区形态、子模块纪律、应用分类、发布链路、已知偏差 |
-| [驱动接口契约与开发规范](docs/development/driver-contract/001-overview.md) | 统一 `BaseDrive` 接口的规范基准，以及怎么写一个合规驱动 —— 对核心库内置驱动和四个独立驱动包同时生效 |
+| [驱动接口契约与开发规范](docs/development/driver-contract/001-overview.md) | 统一 `BaseDrive` 接口的规范基准，以及怎么写一个合规驱动 —— 对核心库内置驱动和五个独立驱动包同时生效 |
 
 两个包都从 `001-overview.md` 进，那是各自的入口和索引。
 在本仓库动手前先读 [CLAUDE.md](CLAUDE.md)，那是最容易踩的几条约定的速查版。

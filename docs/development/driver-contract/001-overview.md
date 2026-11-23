@@ -5,7 +5,7 @@
 `src/fundrive/drives/<name>/`，以及 `fundrive-alipan` / `fundrive-baidu` /
 `fundrive-lanzou` / `fundrive-pan115` / `fundrive-quark` 五个独立驱动包。
 
-正因为它跨这五个仓库，所以留在本编排仓库，而不是任何单个 app 里。
+正因为它跨这六个仓库，所以留在本编排仓库，而不是任何单个 app 里。
 
 ## 章节目录
 
